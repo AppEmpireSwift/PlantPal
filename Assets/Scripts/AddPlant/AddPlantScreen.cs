@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using AddPlant.AddCare;
 using DG.Tweening;
+using MainScreen;
 using Plant;
 using TMPro;
 using UnityEngine;
@@ -55,9 +56,11 @@ namespace AddPlant
 
         private bool _isEditMode = false;
         private PlantData _plantToEdit;
+        private PlantPlane _plantPlaneToEdit;
 
         public event Action<PlantData> DataCreated;
         public event Action BackClicked;
+        public event Action PlantUpdated;
 
         private void Awake()
         {
@@ -245,6 +248,7 @@ namespace AddPlant
             _frequencySelector.gameObject.SetActive(false);
             _isEditMode = false;
             _plantToEdit = null;
+            _plantPlaneToEdit = null;
         }
 
         private void DisableAllCarePlanes()
@@ -373,7 +377,7 @@ namespace AddPlant
             _wateringType = plantData.WateringType;
 
             _plantTypeText.text = _plantTypeDataProvider.GetDataByType(_plantType).TypeName;
-            _wateringTypeText.text = _wateringType.ToString();
+            _wateringTypeText.text = _wateringDataProvider.GetName(_wateringType);
 
             if (_wateringType == WateringType.Custom)
             {
@@ -395,6 +399,18 @@ namespace AddPlant
 
             ToggleEmptyCarePlanes();
             ToggleSaveButton();
+        }
+
+        public void LoadFromPlantPlane(PlantPlane plantPlane)
+        {
+            if (plantPlane == null || plantPlane.PlantData == null)
+                return;
+
+            _isEditMode = true;
+            _plantToEdit = plantPlane.PlantData;
+            _plantPlaneToEdit = plantPlane;
+
+            LoadPlantData(_plantToEdit);
         }
 
         private bool ValidateInputs()
@@ -433,7 +449,17 @@ namespace AddPlant
             if (_careDatas.Count > 0)
                 data.PlantCareDatas = new List<PlantCareData>(_careDatas);
 
-            DataCreated?.Invoke(data);
+            if (_isEditMode && _plantPlaneToEdit != null)
+            {
+                PlantUpdated?.Invoke();
+                _plantPlaneToEdit.Enable(data);
+                Disable();
+            }
+            else
+            {
+                DataCreated?.Invoke(data);
+            }
+
             Disable();
             ResetScreen();
         }

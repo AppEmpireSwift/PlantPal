@@ -20,6 +20,7 @@ namespace MainScreen
         [SerializeField] private GameObject _emptyPlane;
         [SerializeField] private PlantTypeDataProvider _plantTypeDataProvider;
         [SerializeField] private OpenPlantScreen _openPlantScreen;
+        [SerializeField] private AddPlantScreen _editScreen;
 
         private ScreenVisabilityHandler _screenVisabilityHandler;
 
