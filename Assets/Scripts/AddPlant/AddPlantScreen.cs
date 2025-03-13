@@ -61,6 +61,7 @@ namespace AddPlant
         public event Action<PlantData> DataCreated;
         public event Action BackClicked;
         public event Action PlantUpdated;
+        public event Action BackFromEdit;
 
         private void Awake()
         {
@@ -406,6 +407,7 @@ namespace AddPlant
             if (plantPlane == null || plantPlane.PlantData == null)
                 return;
 
+            Enable();
             _isEditMode = true;
             _plantToEdit = plantPlane.PlantData;
             _plantPlaneToEdit = plantPlane;
@@ -436,18 +438,26 @@ namespace AddPlant
                 data.WateringType = _wateringType;
                 data.Note = _noteInput.text;
                 data.Photo = _photosController.GetPhoto();
+        
+                if (data.PlantCareDatas == null)
+                    data.PlantCareDatas = new List<PlantCareData>();
+                else
+                    data.PlantCareDatas.Clear();
+            
+                if (_careDatas.Count > 0)
+                    data.PlantCareDatas.AddRange(_careDatas);
             }
             else
             {
                 data = new PlantData(_nameInput.text, _plantType, _wateringType, _noteInput.text,
                     _photosController.GetPhoto());
+            
+                if (_careDatas.Count > 0)
+                    data.PlantCareDatas = new List<PlantCareData>(_careDatas);
             }
 
             if (_wateringType == WateringType.Custom)
                 data.CustomFrequency = _frequencySelector.CurrentFrequency;
-
-            if (_careDatas.Count > 0)
-                data.PlantCareDatas = new List<PlantCareData>(_careDatas);
 
             if (_isEditMode && _plantPlaneToEdit != null)
             {
@@ -466,7 +476,15 @@ namespace AddPlant
 
         private void OnBackClicked()
         {
-            BackClicked?.Invoke();
+            if (!_isEditMode)
+            {
+                BackClicked?.Invoke();
+            }
+            else
+            {
+                BackFromEdit?.Invoke();
+            }
+
             Disable();
             ResetScreen();
         }

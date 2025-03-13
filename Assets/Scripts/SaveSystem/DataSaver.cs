@@ -2,15 +2,16 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using Newtonsoft.Json;
+using Plant;
 using UnityEngine;
 
 namespace SaveSystem
 {
-    /*public class DataSaver
+    public class DataSaver
     {
-        private readonly string _savePath = Path.Combine(Application.persistentDataPath, "Datas");
+        private readonly string _savePath = Path.Combine(Application.persistentDataPath, "PlantDatas");
 
-        public void SaveData(List<Data.Data> datas)
+        public void SaveData(List<PlantData> datas)
         {
             try
             {
@@ -26,7 +27,7 @@ namespace SaveSystem
             }
         }
 
-        public List<Data.Data> LoadData()
+        public List<PlantData> LoadData()
         {
             try
             {
@@ -39,12 +40,12 @@ namespace SaveSystem
 
                 DataWrapper wrapper = JsonConvert.DeserializeObject<DataWrapper>(jsonData);
 
-                return wrapper?.Datas ?? new List<Data.Data>();
+                return wrapper?.Datas ?? new List<PlantData>();
             }
             catch (Exception e)
             {
                 Debug.LogError($"Error loading item data: {e.Message}");
-                return new List<Data.Data>();
+                return new List<PlantData>();
             }
         }
     }
@@ -52,11 +53,11 @@ namespace SaveSystem
     [Serializable]
     public class DataWrapper
     {
-        public List<Data.Data> Datas;
+        public List<PlantData> Datas;
 
-        public DataWrapper(List<Data.Data> datas)
+        public DataWrapper(List<PlantData> datas)
         {
             Datas = datas;
         }
-    }*/
+    }
 }

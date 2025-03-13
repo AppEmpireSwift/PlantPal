@@ -4,6 +4,7 @@ using System.Linq;
 using AddPlant;
 using DG.Tweening;
 using MainScreen;
+using Plant;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -34,6 +35,7 @@ namespace OpenPlant
         [SerializeField] private WateringDataProvider _wateringDataProvider;
         [SerializeField] private CareTypeDataProvider _careTypeDataProvider;
         [SerializeField] private Button _deleteButton;
+        [SerializeField] private AddPlantScreen _editPlantScreen;
 
         [Header("Animation Settings")] [SerializeField]
         private float _fadeInDuration = 0.3f;
@@ -54,7 +56,6 @@ namespace OpenPlant
         private float _originalFillAmount;
 
         public event Action BackClicked;
-        public event Action<PlantPlane> EditPlantClicked;
         public event Action<PlantPlane> DeleteClicked;
 
         private void Awake()
@@ -74,6 +75,7 @@ namespace OpenPlant
         {
             _backButton.onClick.AddListener(OnBackClicked);
             _deleteButton.onClick.AddListener(OnDeleteClicked);
+            _editPlantScreen.BackFromEdit += _screenVisabilityHandler.EnableScreen;
 
             if (_editButton != null)
             {
@@ -95,6 +97,7 @@ namespace OpenPlant
         {
             _backButton.onClick.RemoveListener(OnBackClicked);
             _deleteButton.onClick.RemoveListener(OnDeleteClicked);
+            _editPlantScreen.BackFromEdit -= _screenVisabilityHandler.EnableScreen;
 
             if (_editButton != null)
             {
@@ -248,12 +251,9 @@ namespace OpenPlant
             Sequence editSequence = DOTween.Sequence();
 
             editSequence.Append(_editButton.transform.DOPunchScale(Vector3.one * 0.3f, 0.3f, 5, 0.5f));
-
-            editSequence.AppendInterval(0.2f);
-
-            editSequence.OnComplete(() => { EditPlantClicked?.Invoke(_currentPlane); });
-
-            editSequence.Play();
+            
+            _editPlantScreen.LoadFromPlantPlane(_currentPlane);
+            Disable();
         }
 
         private void OnWateringClicked()
